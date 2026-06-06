@@ -7,7 +7,8 @@ import StatusIndicators from "./components/StatusIndicators.jsx";
 import SessionStats from "./components/SessionStats.jsx";
 import SettingsPanel from "./components/SettingsPanel.jsx";
 
-const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000";
+// 🆕 NEW CODE
+const API_BASE = import.meta.env.VITE_API_BASE ?? "";
 
 const initialPrediction = {
   ear: 0,

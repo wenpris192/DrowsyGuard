@@ -1,23 +1,34 @@
-FROM python:3.11-slim
+# --- Stage 1: Build the React Frontend ---
+FROM node:20-alpine AS frontend-builder
+WORKDIR /build/frontend
+COPY frontend/package*.json ./
+RUN npm ci
+COPY frontend/ ./
+RUN npm run build
 
+# --- Stage 2: Set up the Python Backend & Serve ---
+FROM python:3.11-slim
 WORKDIR /app
 
-# Install system dependencies for OpenCV
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends libgl1 libglib2.0-0 && \
-    rm -rf /var/lib/apt/lists/*
+# Install system dependencies if required by MediaPipe/OpenCV
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements from the backend folder and install
-COPY backend/requirements.txt ./backend/requirements.txt
+# Install python dependencies
+COPY backend/requirements.txt ./backend/
 RUN pip install --no-cache-dir -r backend/requirements.txt
 
-# Copy everything (so backend can see modeling_result)
-COPY . .
+# Copy backend files and ML model artifacts keeping the original structure
+COPY backend/ ./backend/
+COPY modeling_result/ ./modeling_result/
 
-# Step into backend to run the application
-WORKDIR /app/backend
+# Copy the frontend build artifacts into the backend's static directory
+COPY --from=frontend-builder /build/frontend/dist ./backend/static
 
-# Hugging Face strictly requires port 7860
+# Expose Hugging Face's target port
 EXPOSE 7860
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
+# Run uvicorn pointing to main.py inside the backend folder
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "7860"]
