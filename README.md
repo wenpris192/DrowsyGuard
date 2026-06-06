@@ -169,3 +169,13 @@ Returns:
 - The backend uses MediaPipe Tasks API `FaceLandmarker` in `IMAGE` mode.
 - The frontend sends a new frame only after the previous prediction returns, so it naturally throttles to backend speed.
 - Head nod detection is calibrated against the user's neutral head pose to reduce false positives from webcam angle.
+
+---
+title: DrowsyGuard Backend
+emoji: 🚘
+colorFrom: red
+colorTo: blue
+sdk: docker
+app_port: 7860
+pinned: false
+---
