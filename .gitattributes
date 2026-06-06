@@ -1,0 +1,6 @@
+modeling_result/*.h5 filter=lfs diff=lfs merge=lfs -text
+modeling_result/*.csv filter=lfs diff=lfs merge=lfs -text
+*.h5 filter=lfs diff=lfs merge=lfs -text
+*.task filter=lfs diff=lfs merge=lfs -text
+*.pkl filter=lfs diff=lfs merge=lfs -text
+*.csv filter=lfs diff=lfs merge=lfs -text
